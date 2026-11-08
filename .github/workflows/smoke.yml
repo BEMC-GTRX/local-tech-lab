@@ -1,0 +1,23 @@
+name: smoke-test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install nginx
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq nginx-light
+      - name: Start lab
+        run: ./lab.sh start
+      - name: Solve all missions (9/9)
+        run: ./walkthrough.sh --auto --check
+      - name: Logs on failure
+        if: failure()
+        run: tail -n 50 .run/*.log || true
+      - name: Stop lab
+        if: always()
+        run: ./lab.sh stop
