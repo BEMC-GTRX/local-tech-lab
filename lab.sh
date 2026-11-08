@@ -38,6 +38,17 @@ need() { command -v "$1" >/dev/null 2>&1 || { err "falta '$1' (sudo apt install 
 
 alive() { [ -f "$1" ] && kill -0 "$(cat "$1")" 2>/dev/null; }
 
+# Linux limita la ruta de un socket UNIX a 107 caracteres (sun_path = 108 bytes con el \0 final).
+# Si el repo está en una carpeta muy profunda, nginx falla con un error poco claro: avisamos antes.
+check_socket_path() {
+  local sock="$RUN/backend.sock"
+  if [ "${#sock}" -gt 107 ]; then
+    err "la ruta del socket es demasiado larga (${#sock} caracteres, máximo 107):"
+    err "  $sock"
+    err "mueve el repo a una carpeta más corta, por ejemplo: ~/local-tech-lab"; exit 1
+  fi
+}
+
 load_secret() {
   mkdir -p "$RUN/tmp"
   if [ ! -s "$RUN/secret" ]; then
@@ -62,6 +73,7 @@ start() {
   if alive "$RUN/backend.pid" || alive "$RUN/nginx.pid"; then
     info "el lab ya está corriendo ($BASE)"; return 0
   fi
+  check_socket_path
   load_secret
   render
   nohup python3 "$ROOT/app/server.py" >"$RUN/backend.log" 2>&1 &
@@ -97,6 +109,11 @@ case "${1:-}" in
   status)  status ;;
   reset)   stop; rm -rf "$RUN"; ok "secreto y estado borrados: flags nuevas en el próximo start" ;;
   flags)   load_secret; info "SPOILER - flags de esta instancia:"; python3 "$ROOT/app/server.py" --flags ;;
-  logs)    tail -n 50 -f "$RUN/access.log" "$RUN/backend.log" ;;
+  logs)
+    # Sin un start previo los logs no existen y tail fallaría con un error confuso.
+    if [ ! -f "$RUN/access.log" ] || [ ! -f "$RUN/backend.log" ]; then
+      err "aún no hay logs: arranca primero el lab con ./lab.sh start"; exit 1
+    fi
+    tail -n 50 -f "$RUN/access.log" "$RUN/backend.log" ;;
   *) echo "uso: $0 {start|stop|restart|status|reset|flags|logs}"; exit 1 ;;
 esac

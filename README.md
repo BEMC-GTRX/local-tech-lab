@@ -25,6 +25,7 @@ Total: **230 puntos**. Las misiones están encadenadas: lo que encuentras en una
 
 - Linux (probado en Ubuntu 24.04 / Debian) con `nginx`, `python3` (3.8+) y `curl`.
 - No necesita root ni modifica `/etc/nginx`: todo corre desde la carpeta del repo.
+- Clónalo en una ruta corta (p. ej. `~/local-tech-lab`): Linux limita la ruta del socket UNIX a 107 caracteres.
 
 ```bash
 sudo apt install -y nginx-light python3 curl   # o "nginx" si prefieres el paquete completo
@@ -33,7 +34,7 @@ sudo apt install -y nginx-light python3 curl   # o "nginx" si prefieres el paque
 ## Inicio rápido
 
 ```bash
-git clone https://github.com/<tu-usuario>/local-tech-lab.git
+git clone https://github.com/BEMC-GTRX/local-tech-lab.git
 cd local-tech-lab
 ./lab.sh start
 curl -s http://127.0.0.1:8080/api/missions
