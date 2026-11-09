@@ -1,7 +1,8 @@
 # Local Tech Lab :: HTTP Verbs
 
-Laboratorio local, estilo Hack The Box, para aprender y atacar **los métodos (verbos) HTTP** usando solo `curl`.
-nginx actúa como proxy de borde y un backend en Python (sin dependencias) expone 9 misiones con flags `LTL{...}`.
+Laboratorio práctico de **Local Tech Lab** para comprender los **métodos de petición HTTP (verbos HTTP)** y sus implicaciones en la seguridad de aplicaciones web. A través de nueve misiones conectadas, permite trabajar con `curl` desde la terminal de Linux, interpretar cabeceras y códigos de estado, y analizar fallos de autenticación y control de acceso.
+
+El entorno combina nginx como proxy de entrada y un backend en Python sin dependencias externas. Cada misión incorpora un objetivo técnico y una flag `LTL{...}`; el sistema de puntuación permite seguir el progreso en un entorno local y controlado.
 
 > ⚠️ **Objetivo intencionalmente vulnerable.** Solo escucha en `127.0.0.1`. No lo expongas a una red ni lo despliegues en un servidor público.
 
